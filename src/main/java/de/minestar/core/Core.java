@@ -18,19 +18,39 @@
 
 package de.minestar.core;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.List;
+
 import javax.swing.UIManager;
 
-import de.minestar.gui.MainFrame;
+import de.minestar.handler.CommandScanner;
 
 public class Core {
 
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            new MainFrame().setVisible(true);
+
+            Settings.init(new File("C:/Users/Meldanor/Desktop/MinestarScriptorTest.txt"));
+
+            List<String> projects = Settings.getProjects();
+            CommandScanner scanner = null;
+
+            System.out.println("Scanning all projects");
+            BufferedWriter bWriter = new BufferedWriter(new FileWriter(new File("C:/Users/Meldanor/Desktop/MinestarScriptorTestAusgabe.txt")));
+            for (String project : projects) {
+                scanner = new CommandScanner(Settings.getProjectURL(project), project);
+                bWriter.write(scanner.scan());
+                bWriter.newLine();
+            }
+            bWriter.close();
+
+            System.out.println("Finished all projects");
+//            new MainFrame().setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }
